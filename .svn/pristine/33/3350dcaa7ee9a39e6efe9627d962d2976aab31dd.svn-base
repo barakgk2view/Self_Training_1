@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KFunction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="3.0.0.1">
+  <Name>funTestDates</Name>
+  <ID>Test.funTestDates</ID>
+  <Category>Test</Category>
+  <FunctionLevel>Project</FunctionLevel>
+  <FunctionType>RegularFunction</FunctionType>
+  <FunctionType2>RegularFunction</FunctionType2>
+  <RegisterAsLuDbFunction>false</RegisterAsLuDbFunction>
+  <SaveToDLUR>false</SaveToDLUR>
+  <ApiFunction>false</ApiFunction>
+  <DecisionFunction>false</DecisionFunction>
+  <RequiresLuReference>false</RequiresLuReference>
+  <Desc />
+  <Auther name="" id="" />
+  <Language>Java</Language>
+  <FunctionBody>String res;
+//String parserStartTime = fnUpdateParserStartTime("MERCHANT_UPDATE_LIST");
+String updateStartDate = null;
+String updateEndDate = null;
+java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+java.util.Calendar startDate = java.util.Calendar.getInstance();
+
+//Rivi - Need to be changed back to -2 just for testing -30
+//startDate.add(java.util.Calendar.DATE, -60);
+startDate.add(java.util.Calendar.DATE, -2);    
+java.util.Calendar endDate = java.util.Calendar.getInstance();
+endDate.add(java.util.Calendar.DATE, 0);    
+updateStartDate = dateFormat.format(startDate.getTime());
+updateEndDate = dateFormat.format(endDate.getTime());
+res = updateEndDate;
+reportUserMessage("Start date ="+updateStartDate+",End Date ="+updateEndDate);
+
+String k2RegionPrefix = "";
+String payee = "";
+if(!k2RegionPrefix.equals("US_") &amp;&amp; !k2RegionPrefix.equals("CA_")){
+ payee = "" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMPAESQ_PYMT_NAME" +
+"	Group By 1" +
+"" +
+"	UNION" ;
+}
+
+res= " SELECT " +
+"	MRCH_NBR," +
+"	MAX(DW_UPDT_DTM) AS DW_UPDT_DTM" +
+" FROM (" +
+"	Select " +
+"		TRIM(LEADING '0' FROM B.MERCHANT) AS MRCH_NBR," +
+"		MAX(A.DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMCHNSQ_CHAIN_PARM As A" +
+"	Inner Join ADMIN.VW_" + k2RegionPrefix + "MMMSTSQ_MASTER As B " +
+"		On A.CORPORATE = B.CORPORATE " +
+"		And A.REGION = B.REGION " +
+"		And A.PRINCIPAL = B.PRINCIPAL " +
+"		And A.ASSOCIATE =  B.ASSOCIATE " +
+"		And A.CHAIN = B.CHAIN" +
+"	Group By 1" +
+"" +
+"	UNION " +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMMSTSQ_MASTER" +
+"	Group By 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMIDXSQ_IDX" +
+"	Group By 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMAADSQ_ADDL_ADDRESS" +
+"	Group By 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMADDSQ_ADDRESS_INDEX" +
+"	Group By 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMMADSQ_ADDRESS_MASTER" +
+"	Group By 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMCSLSQ_CARD_SERVICELEVEL" +
+"	Group By 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMDDASQ_DDA" +
+"	GROUP BY 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMEMLSQ_EMAIL" +
+"	Group By 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMIDXAP_IDX_AP" +
+"	Group By 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMINTSQ_IDX_INTEGRITY" +
+"	Group By 1" +
+"" +
+"	UNION" +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMOFFSQ_OFFICER" +
+"	Group By 1" +
+"" +
+"	UNION" +
+payee +
+"" +
+"	Select " +
+"		TRIM(LEADING '0' FROM MERCHANT) AS MRCH_NBR," +
+"		MAX(DW_UPDATE_DTM) AS DW_UPDT_DTM" +
+"	From " +
+"		ADMIN.VW_" + k2RegionPrefix + "MMOWNSQ_OWNER" +
+"	Group By 1) TMP" +
+" where DW_UPDT_DTM &gt; '"+ startDate +"' and DW_UPDT_DTM &lt; '"+ endDate +"' Group by 1";
+
+reportUserMessage(res);
+return res;</FunctionBody>
+  <IsSyntaxValid>true</IsSyntaxValid>
+  <IsRootFunction>false</IsRootFunction>
+  <InputParams />
+  <OutputParams>
+    <Output name="res" id="fo.Test.funTestDates.0" index="0" dataType="String" />
+  </OutputParams>
+</KFunction>
