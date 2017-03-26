@@ -82,5 +82,9 @@
       <Value>0</Value>
       <Comment>Decides if to flush al shared memory objects prior to running the masking</Comment>
     </MajorGlobalItem>
+    <MajorGlobalItem type="Constant" name="STAM">
+      <Value>0</Value>
+      <Comment>Dummy Global</Comment>
+    </MajorGlobalItem>
   </ItemsList>
 </MajorGlobal>
